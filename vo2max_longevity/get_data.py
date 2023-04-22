@@ -63,7 +63,7 @@ class jquery_is_loaded(object):
 
 # Once JQuery is loaded, execute the query starting from the 22nd of July 2018 to today
 WebDriverWait(driver, 100).until(jquery_is_loaded())
-with open('./src/jquery.min.js', errors='ignore') as f:
+with open('./src/jquery.min.js') as f:
     driver.execute_script(f.read())
 time.sleep(10)
 
@@ -99,4 +99,4 @@ for x in response:
         pass
 
 df = pd.DataFrame(d)
-df.to_csv('/Users/harveybarnhard/GitHub/vo2max_longevity/data/vo2max.csv', index=False)
+df.to_csv('./data/vo2max.csv', index=False)
