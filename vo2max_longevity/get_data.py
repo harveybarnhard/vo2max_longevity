@@ -60,8 +60,9 @@ class jquery_is_loaded(object):
             return True
 
 # Once JQuery is loaded, execute the query starting from the 22nd of July 2018 to today
-#with open('./src/jquery.min.js') as f:
-#    driver.execute_script(f.read())
+os.getcwd()
+with open('./src/jquery.min.js') as f:
+    driver.execute_script(f.read())
 WebDriverWait(driver, 100).until(jquery_is_loaded())
 time.sleep(1)
 
