@@ -19,7 +19,7 @@ garmin_password = os.getenv('GARMIN_PASSWORD')
 chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 chrome_options = Options()
 options = [
-    "--headless",
+   # "--headless",
     "--disable-gpu",
     "--ignore-certificate-errors",
     "--disable-extensions",
@@ -46,26 +46,17 @@ username.send_keys(garmin_username)
 password.send_keys(garmin_password)
 driver.find_element('id', 'login-btn-signin').click()
 
-# Helper class to wait until jQuery is loaded
-class jquery_is_loaded(object):
-    def __call__(self, driver):
-        try:
-            output = self.driver.execute_script('''return
-                if (typeof jQuery == 'undefined') {
-                    throw new Error('jQuery is not loaded');
-                }''')
-            return output
-        except:
-            return True
-
-# Once JQuery is loaded, execute the query starting from the 22nd of July 2018 to today
-#with open('./src/jquery.min.js') as f:
-#    driver.execute_script(f.read())
-wait = WebDriverWait(driver, 100).until(jquery_is_loaded())
-time.sleep(5)
+# Load jQuery then execute the query starting from the 22nd of July 2018 to today
+driver.execute_script("""
+var script = document.createElement( 'script' );
+script.type = 'text/javascript';
+script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';
+document.head.appendChild(script);
+""")
+time.sleep(10)
 
 today = date.today()
-query_url = ''' 'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/2018-07-22/2019-07-22','''
+query_url = ''' 'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/2018-07-22/''' + str(today) +  '''', '''
 query = '''
     function(days)
     {
@@ -79,6 +70,7 @@ query = '''
             }
         );
     }'''
+
 response = driver.execute_script('return jQuery.getJSON(' + query_url  + query + ');')
 driver.quit()
 
