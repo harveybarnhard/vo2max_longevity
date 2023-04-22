@@ -40,6 +40,12 @@ jobs:
       env:
         GARMIN_USERNAME: ${{ secrets.GARMIN_USERNAME }}
         GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+    - name: Create time badge
+      run: |
+        datenow=$(date "+%s")
+        before="date\/"
+        after="\?color"
+        sed -i "s|$before\(.*\)$after|$before$datenow$after|" ./README.md
     - name: Commit any changes to data files
       run: |
         git config --local user.name "harveybarnhard"
