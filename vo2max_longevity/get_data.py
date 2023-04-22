@@ -62,6 +62,7 @@ class jquery_is_loaded(object):
 
 # Once JQuery is loaded, execute the query starting from the 22nd of July 2018 to today
 WebDriverWait(driver, 100).until(jquery_is_loaded())
+time.sleep(10)
 
 today = date.today()
 query_url = ''' 'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/2018-07-22/''' + str(today) + '''','''
