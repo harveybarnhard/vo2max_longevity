@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import time
 from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.by import By
