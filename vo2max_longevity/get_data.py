@@ -21,13 +21,12 @@ chrome_options = Options()
 options = [
     "--headless",
     "--disable-gpu",
-    "--window-size=1920,1200",
     "--ignore-certificate-errors",
     "--disable-extensions",
-    "--no-sandbox",
-    "--disable-dev-shm-usage",
     "--enable-javascript",
-    "--disable-web-security"
+    "--disable-web-security",
+    "--window-size=1920,1200",
+    "--ignore-certificate-errors"
 ]
 for option in options:
     chrome_options.add_argument(option)
@@ -60,14 +59,13 @@ class jquery_is_loaded(object):
             return True
 
 # Once JQuery is loaded, execute the query starting from the 22nd of July 2018 to today
-print(os.getcwd())
-with open('./src/jquery.min.js') as f:
-    driver.execute_script(f.read())
-WebDriverWait(driver, 100).until(jquery_is_loaded())
-time.sleep(1)
+#with open('./src/jquery.min.js') as f:
+#    driver.execute_script(f.read())
+wait = WebDriverWait(driver, 100).until(jquery_is_loaded())
+time.sleep(5)
 
 today = date.today()
-query_url = ''' 'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/2018-07-22/''' + str(today) + '''','''
+query_url = ''' 'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/2018-07-22/2019-07-22','''
 query = '''
     function(days)
     {
@@ -81,7 +79,7 @@ query = '''
             }
         );
     }'''
-response = driver.execute_script('return $.getJSON(' + query_url  + query + ');')
+response = driver.execute_script('return jQuery.getJSON(' + query_url  + query + ');')
 driver.quit()
 
 # Convert JSON response to dataframe, skipping null entries then save to CSV
