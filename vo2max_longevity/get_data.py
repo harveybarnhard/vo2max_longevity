@@ -19,14 +19,15 @@ garmin_password = os.getenv('GARMIN_PASSWORD')
 chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 chrome_options = Options()
 options = [
-   # "--headless",
+    "--headless",
     "--disable-gpu",
     "--ignore-certificate-errors",
     "--disable-extensions",
     "--enable-javascript",
     "--disable-web-security",
     "--window-size=1920,1200",
-    "--ignore-certificate-errors"
+    "--ignore-certificate-errors",
+    "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
 ]
 for option in options:
     chrome_options.add_argument(option)
