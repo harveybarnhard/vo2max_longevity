@@ -26,7 +26,8 @@ options = [
     "--disable-extensions",
     "--no-sandbox",
     "--disable-dev-shm-usage",
-    "--enable-javascript"
+    "--enable-javascript",
+    "--disable-web-security"
 ]
 for option in options:
     chrome_options.add_argument(option)
@@ -51,21 +52,18 @@ class jquery_is_loaded(object):
     def __call__(self, driver):
         try:
             output = self.driver.execute_script('''return
-                if (jQuery) {
-                    return true;
-                } else {
-                    return false;
+                if (typeof jQuery == 'undefined') {
+                    throw new Error('jQuery is not loaded');
                 }''')
-            print(output)
             return output
         except:
             return True
 
 # Once JQuery is loaded, execute the query starting from the 22nd of July 2018 to today
-WebDriverWait(driver, 100).until(jquery_is_loaded())
 with open('./src/jquery.min.js') as f:
     driver.execute_script(f.read())
-time.sleep(10)
+WebDriverWait(driver, 100).until(jquery_is_loaded())
+time.sleep(1)
 
 today = date.today()
 query_url = ''' 'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/2018-07-22/''' + str(today) + '''','''
