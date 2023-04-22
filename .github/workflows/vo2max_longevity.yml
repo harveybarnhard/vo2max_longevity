@@ -51,6 +51,7 @@ jobs:
         git config --local user.name "harveybarnhard"
         git config --local user.email "${{ secrets.USER_EMAIL }}"
         git add ./data
+        git add ./README.md
         git commit -m "Auto-updating Garmin data"
     - name: Push any committed changes
       uses: ad-m/github-push-action@master
