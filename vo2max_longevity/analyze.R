@@ -3,8 +3,7 @@ library(zoo)
 library(gam)
 
 # Load data
-basepath = "~/GitHub/vo2max_longevity"
-df = fread(file.path(basepath, "data/vo2max.csv"))
+df = fread("../data/vo2max.csv")
 
 # Fill in dates
 full_dates = data.table(date = as.IDate(seq.Date(from=df[1,]$date, to=df[nrow(df),]$date, by=1)))
@@ -26,7 +25,7 @@ df[, vo2max_m := ma(vo2max)]
 # 3. Use hazard ratios to inflate/deflate this curve
 
 # Estimate baseline mortality curve
-mort = fread(file.path(basepath, "data/mort_data_2018_2021.csv"))
+mort = fread("../data/mort_data_2018_2021.csv")
 setnames(mort, old="Single-Year Ages Code", new="age")
 mort = mort[Gender=="Male" & age < 85 & age > 19,]
 mort[, Population := as.numeric(Population)]
@@ -39,8 +38,8 @@ mod = gam(
 
 # Function that estimates HR relative to average based on vo2max
 # Median vo2max taken from: https://www.kumc.edu/research/alzheimers-disease-research-center/fitness-ranking.html
-vo2max_class = fread(file.path(basepath, "data/vo2max_classification.csv"))
-hr_class = fread(file.path(basepath, "data/HR_relative_to_low.csv"))
+vo2max_class = fread("../data/vo2max_classification.csv")
+hr_class = fread("../data/HR_relative_to_low.csv")
 vo2max_class = merge(vo2max_class, hr_class, by="group", all=T)
 
 hr_est = Vectorize(function(x, base_age, gender="M", data=vo2max_class, med_vo2 = 43.7) {
