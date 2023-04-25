@@ -25,6 +25,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: r-lib/actions/setup-r@master
+
     - name: Set up Python 3.8
       uses: actions/setup-python@v3
       with:
@@ -52,6 +53,8 @@ jobs:
         R -e 'install.packages("gam")'
     - name: Estimate Life Expectancy
       run: Rscript vo2max_longevity/analyze.R
+      env:
+        USER_BIRTHDATE: ${{ secrets.USER_BIRTHDATE }}
     - name: Create time badge
       run: |
         datenow=$(date "+%s")
