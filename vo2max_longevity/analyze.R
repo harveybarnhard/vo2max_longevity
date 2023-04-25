@@ -13,9 +13,9 @@ df = merge(df, full_dates, by="date", all=T)
 
 # Create rolling mean of vo2max
 df[, vo2max := nafill(vo2max, type="locf")]
-ma = function(x) {
+ma = function(x, w=60) {
   rollapply(
-    x, width=60, FUN=function(y) mean(y, na.rm=T),
+    x, width=w, FUN=function(y) mean(y, na.rm=T),
     by=1, by.column=T, partial=T, fill=NA, align="right"
   )
 }
@@ -37,11 +37,6 @@ mod = gam(
   family=binomial(link="logit"), weights=Population,
   data=mort, bs="cs", k=10
 )
-ages = 20:110
-lrate_pred = predict.Gam(mod, newdata=data.table(age=ages))
-mort_base = data.table(ages, lrate=lrate_pred)
-mort_base[, rate := exp(lrate)/(1+exp(lrate))]
-mort_base[, surv := cumprod(1-rate)]
 
 # Function that estimates HR relative to average based on vo2max
 # Median vo2max taken from: https://www.kumc.edu/research/alzheimers-disease-research-center/fitness-ranking.html
@@ -98,24 +93,34 @@ hr_est = Vectorize(function(x, base_age, gender="M", data=vo2max_class, med_vo2 
 # Function to estimate life expectancy based on baseline mortality curve
 # and a hazard ratio (assuming proportional hazards model)
 le_est = Vectorize(function(hr, base_age, data=mort_base) {
+  # Predict mortality rates starting at specific age
+  ages = seq(base_age, 120, by=1)
+  lrate_pred = predict.Gam(mod, newdata=data.table(age=ages))
+  rate = exp(lrate_pred)/(1+exp(lrate_pred))
+  rate[rate > 1] = 1
+  
   # Multiply mortality curve by hazard ratio
-  new_mort = data$rate * hr
-  ages = data$ages
+  new_mort = rate * hr
   
   # Create survival curve
   surv = Vectorize(function(x) {
     curve = cumprod(1-new_mort[ages>=base_age & ages <= x])
     return(curve[length(curve)])
   })
-  auc = integrate(surv, lower = base_age, upper = max(ages), abs.tol=0.01, subdivisions = 1000L)$value
+  auc = integrate(surv, lower = min(ages), upper = max(ages), abs.tol=0.0001, subdivisions = 1000L)$value
   return(base_age + auc)
 })
 
+# Determine age in decmial points
+df[, age_on_date := as.numeric(difftime(date, Sys.getenv("USER_BIRTHDATE"), units="days")/365)]
+
 # Calculate LE for vo2max estimate
-df[, hr_est := hr_est(vo2max_m, base_age=year(date) - 1996)]
-df[, le_est := le_est(hr_est, base_age=year(date) - 1996)]
+df[, hr_est := hr_est(vo2max_m, base_age=age_on_date)]
+df[, le_est := le_est(hr_est, base_age=age_on_date)]
+df[, le_est_m := ma(le_est, w=5)]
 df[, le_diff := le_est - shift(le_est, n=1L, type="lag")]
 
+fwrite(df, file="../data/le_estimates.csv")
 
 # Assumptions:
 # 1. Wrist-based accuracy: https://www.runnersworld.com/gear/a20856601/can-your-watch-estimate-your-vo2-max/ (within 5%!)
