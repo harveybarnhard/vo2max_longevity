@@ -24,6 +24,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: r-lib/actions/setup-r@master
     - name: Set up Python 3.8
       uses: actions/setup-python@v3
       with:
@@ -44,6 +45,13 @@ jobs:
       env:
         GARMIN_USERNAME: ${{ secrets.GARMIN_USERNAME }}
         GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+    - name: Install R Packages
+      run: |
+        R -e 'install.packages("data.table")'
+        R -e 'install.packages("zoo")'
+        R -e 'install.packages("gam")'
+    - name: Estimate Life Expectancy
+      run: Rscript vo2max_longevity/analyze.R
     - name: Create time badge
       run: |
         datenow=$(date "+%s")
