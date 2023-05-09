@@ -11,5 +11,5 @@ Predict longevity changes based on changes in estimated vo2max.
 
 # Notes
 
-1. Workflow is currently fragile in the sense that sometimes required packages do not download/install properly and entire workflow fails, but workflow works around 2/3 of the time.
+1. Workflow is currently fragile in the sense that sometimes required packages do not download/install properly and entire workflow fails, but workflow works around 2/3 of the time. In particular, sometimes JQuery isn't loaded properly when pulling data from Garmin and sometimes `data.table` is not properly installed for the estimation procedure in R.
 2. Current final output is a CSV of longevity estimates, but plots are the desired final output.
