@@ -54,7 +54,7 @@ script.type = 'text/javascript';
 script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';
 document.head.appendChild(script);
 """)
-time.sleep(10)
+time.sleep(20)
 
 today = date.today()
 query_url = ''' 'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/2018-07-22/''' + str(today) +  '''', '''
