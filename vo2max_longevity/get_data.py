@@ -47,6 +47,17 @@ username.send_keys(garmin_username)
 password.send_keys(garmin_password)
 driver.find_element('id', 'login-btn-signin').click()
 
+class jquery_is_loaded(object):
+    def __call__(self, driver):
+        try:
+            output = self.driver.execute_script('''return
+                if (typeof jQuery == 'undefined') {
+                    throw new Error('jQuery is not loaded');
+                }''')
+            return output
+        except:
+            return True
+
 # Load jQuery then execute the query starting from the 22nd of July 2018 to today
 driver.execute_script("""
 var script = document.createElement( 'script' );
@@ -54,6 +65,7 @@ script.type = 'text/javascript';
 script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js';
 document.head.appendChild(script);
 """)
+wait = WebDriverWait(driver, 100).until(jquery_is_loaded())
 time.sleep(20)
 
 today = date.today()
