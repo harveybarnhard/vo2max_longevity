@@ -2,12 +2,18 @@ library(data.table)
 library(zoo)
 library(gam)
 
-# Load data
-df = fread("./data/vo2max.csv")
+# Parameters ===================================================================
+
+# Prepare data =================================================================
+df = fread("../data/vo2max.csv")
 
 # Fill in dates
-full_dates = data.table(date = as.IDate(seq.Date(from=df[1,]$date, to=df[nrow(df),]$date, by=1)))
+full_dates = data.table(
+  date = as.IDate(seq.Date(from=df[1,]$date, to=df[nrow(df),]$date, by=1))
+)
 df = merge(df, full_dates, by="date", all=T)
+
+# Vo2 Max ======================================================================
 
 # Create rolling mean of vo2max
 df[, vo2max := nafill(vo2max, type="locf")]
@@ -17,7 +23,14 @@ ma = function(x, w=60) {
     by=1, by.column=T, partial=T, fill=NA, align="right"
   )
 }
-df[, vo2max_m := ma(vo2max)]
+df_list = list()
+wvec = seq(10, 100, by=10)
+for(i in 1:length(wvec)) {
+  df_list[[i]] = copy(df)[, (c("vo2max_m", "w")) := list(ma(vo2max, wvec[i]), wvec[i])]
+}
+df = rbindlist(df_list)
+
+# Survival Curve ===============================================================
 
 # For each estimated vo2max value, calculate survival curve
 # 1. Estimate survival curve of American at median income
@@ -25,7 +38,7 @@ df[, vo2max_m := ma(vo2max)]
 # 3. Use hazard ratios to inflate/deflate this curve
 
 # Estimate baseline mortality curve
-mort = fread("./data/mort_data_2018_2021.csv")
+mort = fread("../data/mort_data_2018_2021.csv")
 setnames(mort, old="Single-Year Ages Code", new="age")
 mort = mort[Gender=="Male" & age < 85 & age > 19,]
 mort[, Population := as.numeric(Population)]
@@ -38,8 +51,8 @@ mod = gam(
 
 # Function that estimates HR relative to average based on vo2max
 # Median vo2max taken from: https://www.kumc.edu/research/alzheimers-disease-research-center/fitness-ranking.html
-vo2max_class = fread("./data/vo2max_classification.csv")
-hr_class = fread("./data/HR_relative_to_low.csv")
+vo2max_class = fread("../data/vo2max_classification.csv")
+hr_class = fread("../data/HR_relative_to_low.csv")
 vo2max_class = merge(vo2max_class, hr_class, by="group", all=T)
 
 hr_est = Vectorize(function(x, base_age, gender="M", data=vo2max_class, med_vo2 = 43.7) {
@@ -118,7 +131,7 @@ df[, le_est := le_est(hr_est, base_age=age_on_date)]
 df[, le_est_m := ma(le_est, w=5)]
 df[, le_diff := le_est - shift(le_est, n=1L, type="lag")]
 
-fwrite(df, file="./data/le_estimates.csv")
+fwrite(df, file="../data/le_estimates.csv")
 
 # Assumptions:
 # 1. Wrist-based accuracy: https://www.runnersworld.com/gear/a20856601/can-your-watch-estimate-your-vo2-max/ (within 5%!)
