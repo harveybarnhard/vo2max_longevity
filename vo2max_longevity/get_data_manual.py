@@ -3,7 +3,7 @@ import pandas as pd
 import time
 import json
 
-f = open('../data/garmin_response.json')
+f = open('./data/garmin_response.json')
 
 response = json.load(f)
 
@@ -20,4 +20,4 @@ for x in response:
         pass
 
 df = pd.DataFrame(d)
-df.to_csv('../data/vo2max.csv', index=False)
+df.to_csv('./data/vo2max.csv', index=False)
