@@ -47,7 +47,7 @@ server <- function(input, output) {
   })
   output$le <- renderPlot({
     ggplot(data=dt[w==input$width,]) +
-      geom_line(mapping=aes(x=date, y=le_est), color="blue") +
+      geom_line(mapping=aes(x=date, y=le_est_m), color="blue") +
       theme_classic() +
       xlab("") + ylab("Life Expectancy")
     
