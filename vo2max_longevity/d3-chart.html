@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Bin Life Expectancy Time Series</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <svg id="chart"></svg>
+    <input type="range" id="incomeSlider" min="1" max="10" value="1" step="1">
+
+    <script>
+        // Set the dimensions of the chart
+        const width = 800;
+        const height = 400;
+        const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+
+        // Create an SVG element
+        const svg = d3.select("#chart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Load data from CSV
+        d3.csv("https://raw.githubusercontent.com/harveybarnhard/vo2max_longevity/main/data/le_estimates.csv").then(data => {
+            // Parse date strings to JavaScript Date objects
+            const parseDate = d3.timeParse("%Y-%m-%d");
+            data.forEach(d => {
+                d.date = parseDate(d.date);
+                d.le_est_m = +d.le_est_m; // Convert to numeric
+                d.w = +d.w; // Convert to numeric
+            });
+
+            const ws = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+            let currentw = ws[0]; // Default to the fifth bin
+
+            const updateChart = (w) => {
+                const wData = data.filter(d => d.w === w);
+
+                // Create x and y scales
+                const xScale = d3.scaleTime()
+                    .domain(d3.extent(wData, d => d.date))
+                    .range([0, width]);
+
+                const yScale = d3.scaleLinear()
+                    .domain([80, d3.max(wData, d => d.le_est_m)])
+                    .range([height, 0]);
+
+                // Create x and y axes
+                const xAxis = d3.axisBottom(xScale);
+                const yAxis = d3.axisLeft(yScale);
+
+                // Update axes
+                svg.select(".x-axis")
+                    .transition()
+                    .call(xAxis);
+
+                svg.select(".y-axis")
+                    .transition()
+                    .call(yAxis);
+
+                // Update data points
+                const circles = svg.selectAll(".data-point")
+                    .data(wData, d => d.date);
+
+                circles.exit().remove();
+
+                circles.enter().append("circle")
+                    .attr("class", "data-point")
+                    .attr("r", 4)
+                    .merge(circles)
+                    .transition()
+                    .attr("cx", d => xScale(d.date))
+                    .attr("cy", d => yScale(d.le_est_m));
+            };
+
+            // Create initial chart
+            updateChart(currentw);
+
+            // Handle slider input
+            d3.select("#incomeSlider").on("input", function () {
+                currentw = +this.value;
+                updateChart(currentw);
+            });
+        }).catch(error => {
+            console.error("Error loading data:", error);
+        });
+    </script>
+</body>
+</html>
