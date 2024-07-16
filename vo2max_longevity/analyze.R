@@ -128,7 +128,7 @@ df[, age_on_date := as.numeric(difftime(date, Sys.getenv("USER_BIRTHDATE"), unit
 # Calculate LE for vo2max estimate
 df[, hr_est := hr_est(vo2max_m, base_age=age_on_date)]
 df[, le_est := le_est(hr_est, base_age=age_on_date)]
-df[, le_est_m := ma(le_est, w=5)]
+df[, le_est_m := ma(le_est, w=20)]
 df[, le_diff := le_est - shift(le_est, n=1L, type="lag")]
 
 fwrite(df, file="./data/le_estimates.csv")
