@@ -3,7 +3,7 @@ Predict longevity changes based on changes in estimated vo2max.
 
 <img src="https://github.com/harveybarnhard/vo2max_longevity/actions/workflows/vo2max_longevity.yml/badge.svg" height="20" />
 
-<img src="https://img.shields.io/date/1721096427?color=007cc3&label=Last%20Updated&logo=garmin" height="20" />
+<img src="https://img.shields.io/date/1721127651?color=007cc3&label=Last%20Updated&logo=garmin" height="20" />
 
 <img src="[https://cdn.jamanetwork.com/ama/content_public/journal/jamanetworkopen/937561/zoi180168f2.png?Expires=1694543187&Signature=J09-L1zLDhNw7wiWb~iW0Qj11QaY~kNLg9Ved14RE~npRA251FHyUC8H0YzqP8Sbk314YZ1BD9A1J01VKpB7rOQQKUOg0G1LXsfb4R3EoZYTJAJTaDoK5rVx4UgOB15t13vaXXCXsSLJElyI0dTpdAD4MrHDVJLi3gRcKljGZjEQX1TL-nzsjkqJCvcgdc0RJUTy6S8F3OBJpnTDl62srEnaXiyV~giti0qdAXG6rCx-e-j4AYHMCxYgHiMd8V-vftDS0t-gGjCW68zTvbFua5YAH8doM-3dLnFnthy8NM1fQtZoV8-YzrvZIkq3HZlfUmVYSMxHQ7r9tiRulDgpGw__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA](https://cdn.jamanetwork.com/ama/content_public/journal/jamanetworkopen/937561/zoi180168f2.png?Expires=1723956891&Signature=wTAOJnX1dy7INY9OpbPwwVwRk8wy9nSmpIK3dqwv89o9zFSMlWMfOiN8SV7DLp6aJM4RCEOnmyBsd7Zg8TzbeDY~hxL~oIGsbQI69cbG6hfWp1uzQxliCR8OT4A7tLaVEsWeoYDFQjfnnIRsTCb0~TwWhlG9KbmL4IOxIk5NypWbIFjk8btM~65NZQldVT5Lxq0dd8cS-ZyA6Q~sic~hR2CeHnFVHX5QM8TZYbAytA4Xue~AZrc~Ic56uBUbIKX1LbNML~WszgOYNJAYwurRP-lQzIz1Kid9RpZiBqgA4zGl4jwBpDkobrv7~w7mLFIJQCwtqc0JGPRr63QCusctiA__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA)" height="600" class="center">
 
