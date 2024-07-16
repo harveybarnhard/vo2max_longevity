@@ -24,7 +24,8 @@ ma = function(x, w=60) {
   )
 }
 df_list = list()
-wvec = seq(10, 100, by=10)
+#wvec = seq(10, 100, by=10)
+wvec = 50
 for(i in 1:length(wvec)) {
   df_list[[i]] = copy(df)[, (c("vo2max_m", "w")) := list(ma(vo2max, wvec[i]), wvec[i])]
 }
@@ -128,7 +129,7 @@ df[, age_on_date := as.numeric(difftime(date, Sys.getenv("USER_BIRTHDATE"), unit
 # Calculate LE for vo2max estimate
 df[, hr_est := hr_est(vo2max_m, base_age=age_on_date)]
 df[, le_est := le_est(hr_est, base_age=age_on_date)]
-df[, le_est_m := ma(le_est, w=20)]
+df[, le_est_m := ma(le_est, w=5)]
 df[, le_diff := le_est - shift(le_est, n=1L, type="lag")]
 
 fwrite(df, file="./data/le_estimates.csv")
